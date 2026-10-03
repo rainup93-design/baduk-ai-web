@@ -1,0 +1,33 @@
+[
+  {
+    "id": "g_1791017141012_bogrk",
+    "userId": "guest",
+    "username": "게스트",
+    "nickname": "게스트",
+    "difficulty": "normal",
+    "playerColor": 1,
+    "winner": 1,
+    "isWin": true,
+    "earnedCoins": 300,
+    "reason": "인공지능(AI) 착수 불가 - 플레이어 승리!",
+    "boardSize": 19,
+    "movesCount": 579,
+    "moves": [],
+    "createdAt": "2026-10-03T08:45:41.012Z"
+  },
+  {
+    "id": "g_1791015778477_hjxnx",
+    "userId": "guest",
+    "username": "게스트",
+    "nickname": "게스트",
+    "difficulty": "easy",
+    "playerColor": 1,
+    "winner": 1,
+    "isWin": true,
+    "reason": "흑 353.5집 승 (계가 완료)",
+    "boardSize": 19,
+    "movesCount": 571,
+    "moves": [],
+    "createdAt": "2026-10-03T08:22:58.477Z"
+  }
+]

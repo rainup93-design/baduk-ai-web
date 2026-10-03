@@ -1,0 +1,32 @@
+[
+  {
+    "id": "user_1791013576721_6a6o",
+    "username": "baduk_pro",
+    "nickname": "????",
+    "passwordHash": "$2a$10$sK9gyWjXwyjE.JluDCSGxutaDw4ZJLBNgY/st7rfroRCBJysZrMAC",
+    "createdAt": "2026-10-03T07:46:16.721Z",
+    "stats": {
+      "total": 0,
+      "wins": 0,
+      "losses": 0,
+      "byDifficulty": {
+        "easy": {
+          "wins": 0,
+          "losses": 0
+        },
+        "normal": {
+          "wins": 0,
+          "losses": 0
+        },
+        "hard": {
+          "wins": 0,
+          "losses": 0
+        },
+        "max": {
+          "wins": 0,
+          "losses": 0
+        }
+      }
+    }
+  }
+]
