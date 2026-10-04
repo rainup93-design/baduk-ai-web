@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蹂대뱶寃뚯엫 留덉뒪??- 諛붾몣 쨌 ?ㅻぉ 쨌 ?κ린 쨌 泥댁뒪 AI ?援?/title>
+  <link rel="stylesheet" href="css/hub.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="hub-header">
+    <div class="hub-logo">
+      <span class="hub-logo-icon">?렜</span>
+      <h1>蹂대뱶寃뚯엫 留덉뒪??/h1>
+    </div>
+    <div class="hub-header-right">
+      <!-- Coin Badge -->
+      <div class="coin-badge" id="hubCoinBadge">
+        <span>?첌</span>
+        <span id="hubCoins">300</span>
+      </div>
+      <!-- Auth -->
+      <div id="hubGuestSection">
+        <button class="btn btn-secondary" id="hubBtnAuth">濡쒓렇??/ ?뚯썝媛??/button>
+      </div>
+      <div id="hubUserSection" style="display:none; align-items:center; gap:10px;">
+        <div class="user-badge" id="hubUserBadge">
+          <div class="user-avatar" id="hubAvatar">U</div>
+          <span id="hubUserName">?ъ슜??/span>
+        </div>
+        <button class="btn btn-icon" id="hubBtnLogout" title="濡쒓렇?꾩썐">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hub-hero">
+    <h2 class="hub-hero-title">AI? ?④퍡?섎뒗<br><span class="gold">?꾪넻 蹂대뱶寃뚯엫</span></h2>
+    <p class="hub-hero-sub">4媛吏 寃뚯엫 쨌 4?④퀎 ?쒖씠??쨌 肄붿씤 & ?ㅽ궓 ?쒖뒪??/p>
+  </section>
+
+  <!-- Game Cards Grid -->
+  <main class="hub-main">
+    <div class="game-grid">
+      <!-- 諛붾몣 -->
+      <div class="game-card" data-game="baduk" onclick="selectGame('baduk')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #c0843e, #e4ab65);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">??/div>
+          <h3 class="game-name">諛붾몣</h3>
+          <p class="game-desc">AI? ?④퍡 利먭린???꾪넻 諛붾몣 ?援? 肄붿씤 蹂댁긽 쨌 ?ㅽ궓 ?쒖뒪??</p>
+          <div class="game-badges">
+            <span class="badge">19횞19</span>
+            <span class="badge">9횞9</span>
+            <span class="badge coin-badge-sm">理쒕? +2000?첌</span>
+          </div>
+          <button class="game-btn">?援??쒖옉</button>
+        </div>
+      </div>
+
+      <!-- ?ㅻぉ -->
+      <div class="game-card" data-game="omok" onclick="selectGame('omok')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #15803d, #4ade80);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">狩?/div>
+          <h3 class="game-name">?ㅻぉ</h3>
+          <p class="game-desc">5媛쒕? 癒쇱? ?곌껐?섎㈃ ?밸━! 15횞15 ?먯뿉??踰뚯뼱吏??鍮좊Ⅸ ?먮뇤 ?몄?.</p>
+          <div class="game-badges">
+            <span class="badge">15횞15</span>
+            <span class="badge">5紐??밸━</span>
+            <span class="badge coin-badge-sm">理쒕? +1500?첌</span>
+          </div>
+          <button class="game-btn" style="background: linear-gradient(135deg, #15803d, #22c55e);">?援??쒖옉</button>
+        </div>
+      </div>
+
+      <!-- ?κ린 -->
+      <div class="game-card" data-game="janggi" onclick="selectGame('janggi')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #b91c1c, #f87171);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">??/div>
+          <h3 class="game-name">?κ린</h3>
+          <p class="game-desc">?쒓뎅 ?꾪넻 ?κ린! ?곷???沅곸쓣 ?ъ쐞?섏뿬 ?밸━瑜?嫄곕몢?대씪.</p>
+          <div class="game-badges">
+            <span class="badge">10횞9</span>
+            <span class="badge">?쒓뎅 ?꾪넻</span>
+            <span class="badge coin-badge-sm">理쒕? +1500?첌</span>
+          </div>
+          <button class="game-btn" style="background: linear-gradient(135deg, #b91c1c, #ef4444);">?援??쒖옉</button>
+        </div>
+      </div>
+
+      <!-- 泥댁뒪 -->
+      <div class="game-card" data-game="chess" onclick="selectGame('chess')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #5b21b6, #a78bfa);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">?잞툘</div>
+          <h3 class="game-name">泥댁뒪</h3>
+          <p class="game-desc">?멸퀎 理쒓퀬???먮뇤 寃뚯엫. 媛뺣젰??AI? 泥댁뒪 ?ㅻ젰??寃⑤쨪蹂댁꽭??</p>
+          <div class="game-badges">
+            <span class="badge">8횞8</span>
+            <span class="badge">援?젣 ?쒖?</span>
+            <span class="badge coin-badge-sm">理쒕? +1500?첌</span>
+          </div>
+          <button class="game-btn" style="background: linear-gradient(135deg, #5b21b6, #8b5cf6);">?援??쒖옉</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coin Info -->
+    <div class="hub-info-bar">
+      <div class="hub-info-item">?첌 <strong>肄붿씤 蹂댁긽</strong> - ?쒖씠?꾧? ?믪쓣?섎줉 ??留롮? 肄붿씤 ?띾뱷!</div>
+      <div class="hub-info-item">?썚截?<strong>?ㅽ궓 ?곸젏</strong> - 肄붿씤?쇰줈 諛붾몣?먃룸룎 ?ㅽ궓 援щℓ</div>
+      <div class="hub-info-item">?룇 <strong>?꾩쟻 愿由?/strong> - 寃뚯엫蹂?????湲곕줉 ?먮룞 ???/div>
+    </div>
+  </main>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="hubModalAuth">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">?뚯썝 ?쒕퉬??/h3>
+        <button class="modal-close" onclick="closeHubModal('hubModalAuth')">&times;</button>
+      </div>
+      <div class="tab-headers">
+        <button class="tab-btn active" id="hubTabLogin" onclick="switchAuthTab('login')">濡쒓렇??/button>
+        <button class="tab-btn" id="hubTabRegister" onclick="switchAuthTab('register')">?뚯썝媛??/button>
+      </div>
+      <form id="hubFormLogin">
+        <div class="form-group">
+          <label class="form-label">?꾩씠??/label>
+          <input type="text" class="form-input" id="hubLoginUsername" placeholder="?꾩씠???낅젰" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">鍮꾨?踰덊샇</label>
+          <input type="password" class="form-input" id="hubLoginPassword" placeholder="鍮꾨?踰덊샇 ?낅젰" required>
+        </div>
+        <div class="form-error" id="hubLoginError"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:10px;">濡쒓렇??/button>
+      </form>
+      <form id="hubFormRegister" style="display:none">
+        <div class="form-group">
+          <label class="form-label">?꾩씠??/label>
+          <input type="text" class="form-input" id="hubRegUsername" placeholder="3???댁긽 ?곷Ц/?レ옄" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">?됰꽕??/label>
+          <input type="text" class="form-input" id="hubRegNickname" placeholder="?援?뿉???쒖떆???대쫫">
+        </div>
+        <div class="form-group">
+          <label class="form-label">鍮꾨?踰덊샇</label>
+          <input type="password" class="form-input" id="hubRegPassword" placeholder="4???댁긽" required>
+        </div>
+        <div class="form-error" id="hubRegError"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:10px;">?뚯썝媛???꾨즺</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Auth integration
+    async function init() {
+      await authManager.checkAuth();
+      updateHubUI();
+    }
+
+    function updateHubUI() {
+      const user = authManager.user;
+      const coins = authManager.getCoins();
+      document.getElementById('hubCoins').textContent = coins;
+
+      if (user) {
+        document.getElementById('hubGuestSection').style.display = 'none';
+        document.getElementById('hubUserSection').style.display = 'flex';
+        const nick = user.nickname || user.username;
+        document.getElementById('hubAvatar').textContent = nick[0].toUpperCase();
+        document.getElementById('hubUserName').textContent = nick;
+      } else {
+        document.getElementById('hubGuestSection').style.display = 'block';
+        document.getElementById('hubUserSection').style.display = 'none';
+      }
+    }
+
+    authManager.onUserChange(updateHubUI);
+
+    function selectGame(gameId) {
+      window.location.href = `${gameId}.html`;
+    }
+
+    document.getElementById('hubBtnAuth').addEventListener('click', () => {
+      document.getElementById('hubModalAuth').classList.add('active');
+    });
+
+    document.getElementById('hubBtnLogout').addEventListener('click', async () => {
+      if (confirm('濡쒓렇?꾩썐 ?섏떆寃좎뒿?덇퉴?')) {
+        await authManager.logout();
+        updateHubUI();
+      }
+    });
+
+    document.getElementById('hubModalAuth').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('hubModalAuth')) {
+        closeHubModal('hubModalAuth');
+      }
+    });
+
+    function closeHubModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('hubTabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('hubTabRegister').classList.toggle('active', tab === 'register');
+      document.getElementById('hubFormLogin').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('hubFormRegister').style.display = tab === 'register' ? 'block' : 'none';
+    }
+
+    document.getElementById('hubFormLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('hubLoginError').textContent = '';
+      try {
+        await authManager.login(
+          document.getElementById('hubLoginUsername').value.trim(),
+          document.getElementById('hubLoginPassword').value
+        );
+        closeHubModal('hubModalAuth');
+        updateHubUI();
+      } catch (err) {
+        document.getElementById('hubLoginError').textContent = err.message;
+      }
+    });
+
+    document.getElementById('hubFormRegister').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('hubRegError').textContent = '';
+      try {
+        await authManager.register(
+          document.getElementById('hubRegUsername').value.trim(),
+          document.getElementById('hubRegPassword').value,
+          document.getElementById('hubRegNickname').value.trim()
+        );
+        closeHubModal('hubModalAuth');
+        updateHubUI();
+      } catch (err) {
+        document.getElementById('hubRegError').textContent = err.message;
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

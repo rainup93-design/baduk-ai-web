@@ -3,388 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI 바둑 (Baduk Master) - 인공지능 대국</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>보드게임 마스터 - 바둑 · 오목 · 장기 · 체스 AI 대국</title>
+  <link rel="stylesheet" href="css/hub.css">
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <!-- Top Navigation Header -->
-  <header class="app-header">
-    <div class="logo-area" id="btnLogo">
-      <div class="logo-icon"></div>
-      <h1 class="logo-title">AI 바둑 마스터</h1>
+  <!-- Header -->
+  <header class="hub-header">
+    <div class="hub-logo">
+      <span class="hub-logo-icon">🎮</span>
+      <h1>보드게임 마스터</h1>
     </div>
-
-    <div class="header-actions">
+    <div class="hub-header-right">
       <!-- Coin Badge -->
-      <div class="coin-badge" id="headerCoinBadge" title="보유 코인">
-        <span class="coin-icon">🪙</span>
-        <span id="headerCoins" style="font-weight: 700; color: #ffd700;">300</span>
+      <div class="coin-badge" id="hubCoinBadge">
+        <span>🪙</span>
+        <span id="hubCoins">300</span>
       </div>
-
-      <!-- Shop Button -->
-      <button class="btn btn-secondary" id="btnOpenShopModal">
-        <span>🛍️</span>
-        스킨 상점
-      </button>
-
-      <button class="btn btn-primary" id="btnOpenNewGameModal">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        새 대국
-      </button>
-
-      <!-- Guest State -->
-      <div id="guestSection" style="display: flex; gap: 8px;">
-        <button class="btn btn-secondary" id="btnOpenAuthModal">로그인 / 회원가입</button>
+      <!-- Auth -->
+      <div id="hubGuestSection">
+        <button class="btn btn-secondary" id="hubBtnAuth">로그인 / 회원가입</button>
       </div>
-
-      <!-- Logged In State -->
-      <div id="userSection" style="display: none; align-items: center; gap: 10px;">
-        <div class="user-badge" id="btnOpenProfileModal" style="cursor: pointer;" title="내 전적 보기">
-          <div class="user-avatar" id="headerAvatar">U</div>
-          <span class="user-name" id="headerUserName">사용자</span>
-          <span class="user-record" id="headerUserRecord">0승 0패</span>
+      <div id="hubUserSection" style="display:none; align-items:center; gap:10px;">
+        <div class="user-badge" id="hubUserBadge">
+          <div class="user-avatar" id="hubAvatar">U</div>
+          <span id="hubUserName">사용자</span>
         </div>
-        <button class="btn btn-secondary" id="btnOpenHistoryModal" title="대국 기록">기록</button>
-        <button class="btn btn-icon" id="btnLogout" title="로그아웃">
+        <button class="btn btn-icon" id="hubBtnLogout" title="로그아웃">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Game Workspace -->
-  <main class="main-container">
-    <!-- Board Section -->
-    <section class="board-section">
-      <div class="board-wrapper">
-        <canvas id="badukCanvas" width="580" height="580"></canvas>
-      </div>
-    </section>
+  <!-- Hero Section -->
+  <section class="hub-hero">
+    <h2 class="hub-hero-title">AI와 함께하는<br><span class="gold">전통 보드게임</span></h2>
+    <p class="hub-hero-sub">4가지 게임 · 4단계 난이도 · 코인 & 스킨 시스템</p>
+  </section>
 
-    <!-- Side Control Panel -->
-    <aside class="side-panel">
-      <!-- Match Info Card -->
-      <div class="card">
-        <div class="match-status-header">
-          <h2 style="font-size: 1rem; font-weight: 700;">대국 현황</h2>
-          <span class="difficulty-badge diff-normal" id="currentDiffBadge">보통 난이도</span>
-        </div>
-
-        <div class="players-box">
-          <!-- Black Player -->
-          <div class="player-row" id="playerRowBlack">
-            <div class="player-info">
-              <span class="stone-pill black"></span>
-              <div class="player-name-wrap">
-                <span class="p-name" id="nameBlack">나 (흑)</span>
-                <span class="p-role" id="roleBlack">플레이어</span>
-              </div>
-            </div>
-            <div class="player-stats">
-              <span class="captured-count" id="capturesBlack">0</span>
-              <span class="captures-label">사석(따낸 돌)</span>
-            </div>
+  <!-- Game Cards Grid -->
+  <main class="hub-main">
+    <div class="game-grid">
+      <!-- 바둑 -->
+      <div class="game-card" data-game="baduk" onclick="selectGame('baduk')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #c0843e, #e4ab65);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">⚫</div>
+          <h3 class="game-name">바둑</h3>
+          <p class="game-desc">AI와 함께 즐기는 전통 바둑 대국. 코인 보상 · 스킨 시스템.</p>
+          <div class="game-badges">
+            <span class="badge">19×19</span>
+            <span class="badge">9×9</span>
+            <span class="badge coin-badge-sm">최대 +2000🪙</span>
           </div>
-
-          <!-- White Player -->
-          <div class="player-row" id="playerRowWhite">
-            <div class="player-info">
-              <span class="stone-pill white"></span>
-              <div class="player-name-wrap">
-                <span class="p-name" id="nameWhite">인공지능 (백)</span>
-                <span class="p-role" id="roleWhite">AI (덤 6.5집)</span>
-              </div>
-            </div>
-            <div class="player-stats">
-              <span class="captured-count" id="capturesWhite">0</span>
-              <span class="captures-label">사석(따낸 돌)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Current Status Banner -->
-        <div class="turn-status-banner" id="turnStatusBanner">
-          <span id="turnStatusText">대국 진행 중</span>
+          <button class="game-btn">대국 시작</button>
         </div>
       </div>
 
-      <!-- Action Controls Card -->
-      <div class="card">
-        <div class="controls-grid">
-          <button class="btn btn-secondary" id="btnPass">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-            착수 포기 (Pass)
-          </button>
-          <button class="btn btn-secondary" id="btnUndo">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h10a5 5 0 015 5v2m-15-7l4-4m-4 4l4 4"/></svg>
-            무르기 (Undo)
-          </button>
-          <button class="btn btn-secondary" id="btnEstimate">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            형세 판단
-          </button>
-          <button class="btn btn-danger" id="btnResign">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
-            기권 (패배)
-          </button>
-        </div>
-
-        <div class="quick-options">
-          <label class="toggle-label">
-            <input type="checkbox" id="chkShowMoveNumbers">
-            착수 번호 표시
-          </label>
-          <label class="toggle-label">
-            <input type="checkbox" id="chkSound" checked>
-            돌 소리 효과음
-          </label>
-        </div>
-      </div>
-    </aside>
-  </main>
-
-  <!-- MODAL: New Game Settings -->
-  <div class="modal-overlay" id="modalNewGame">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title">새 대국 설정</h3>
-        <button class="modal-close" data-close>&times;</button>
-      </div>
-
-      <!-- Difficulty Selection -->
-      <div class="form-group">
-        <label class="form-label">AI 난이도 선택</label>
-        <div class="choice-group difficulty-cols" id="diffSelection">
-          <div class="choice-card" data-diff="easy">
-            <span class="choice-title" style="color:#4ade80;">쉬움</span>
-            <span class="choice-desc">입문자용</span>
+      <!-- 오목 -->
+      <div class="game-card" data-game="omok" onclick="selectGame('omok')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #15803d, #4ade80);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">⭕</div>
+          <h3 class="game-name">오목</h3>
+          <p class="game-desc">5개를 먼저 연결하면 승리! 15×15 판에서 벌어지는 빠른 두뇌 싸움.</p>
+          <div class="game-badges">
+            <span class="badge">15×15</span>
+            <span class="badge">5목 승리</span>
+            <span class="badge coin-badge-sm">최대 +1500🪙</span>
           </div>
-          <div class="choice-card selected" data-diff="normal">
-            <span class="choice-title" style="color:#facc15;">보통</span>
-            <span class="choice-desc">초중급</span>
-          </div>
-          <div class="choice-card" data-diff="hard">
-            <span class="choice-title" style="color:#f87171;">어려움</span>
-            <span class="choice-desc">상급자용</span>
-          </div>
-          <div class="choice-card" data-diff="max">
-            <span class="choice-title" style="color:#c084fc;">최대</span>
-            <span class="choice-desc">MCTS 최고수</span>
-          </div>
+          <button class="game-btn" style="background: linear-gradient(135deg, #15803d, #22c55e);">대국 시작</button>
         </div>
       </div>
 
-      <!-- Board Size Selection -->
-      <div class="form-group">
-        <label class="form-label">바둑판 크기</label>
-        <div class="choice-group" id="sizeSelection" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="choice-card" data-size="9">
-            <span class="choice-title">9 x 9</span>
-            <span class="choice-desc">빠른 속기</span>
+      <!-- 장기 -->
+      <div class="game-card" data-game="janggi" onclick="selectGame('janggi')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #b91c1c, #f87171);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">🀄</div>
+          <h3 class="game-name">장기</h3>
+          <p class="game-desc">한국 전통 장기! 상대의 궁을 포위하여 승리를 거두어라.</p>
+          <div class="game-badges">
+            <span class="badge">10×9</span>
+            <span class="badge">한국 전통</span>
+            <span class="badge coin-badge-sm">최대 +1500🪙</span>
           </div>
-          <div class="choice-card" data-size="13">
-            <span class="choice-title">13 x 13</span>
-            <span class="choice-desc">중형 판</span>
-          </div>
-          <div class="choice-card selected" data-size="19">
-            <span class="choice-title">19 x 19</span>
-            <span class="choice-desc">정규 바둑</span>
-          </div>
+          <button class="game-btn" style="background: linear-gradient(135deg, #b91c1c, #ef4444);">대국 시작</button>
         </div>
       </div>
 
-      <!-- Player Color Selection -->
-      <div class="form-group">
-        <label class="form-label">돌 색상 선택</label>
-        <div class="choice-group" id="colorSelection">
-          <div class="choice-card selected" data-color="black">
-            <span class="choice-title">흑돌 (선착)</span>
-            <span class="choice-desc">먼저 착수</span>
+      <!-- 체스 -->
+      <div class="game-card" data-game="chess" onclick="selectGame('chess')">
+        <div class="game-card-bg" style="background: linear-gradient(135deg, #5b21b6, #a78bfa);"></div>
+        <div class="game-card-inner">
+          <div class="game-emoji">♟️</div>
+          <h3 class="game-name">체스</h3>
+          <p class="game-desc">세계 최고의 두뇌 게임. 강력한 AI와 체스 실력을 겨뤄보세요!</p>
+          <div class="game-badges">
+            <span class="badge">8×8</span>
+            <span class="badge">국제 표준</span>
+            <span class="badge coin-badge-sm">최대 +1500🪙</span>
           </div>
-          <div class="choice-card" data-color="white">
-            <span class="choice-title">백돌 (후착)</span>
-            <span class="choice-desc">덤 6.5집 획득</span>
-          </div>
+          <button class="game-btn" style="background: linear-gradient(135deg, #5b21b6, #8b5cf6);">대국 시작</button>
         </div>
-      </div>
-
-      <div style="margin-top: 24px;">
-        <button class="btn btn-primary" id="btnStartGame" style="width: 100%; justify-content: center; padding: 12px;">대국 시작하기</button>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL: Auth (Login & Register) -->
-  <div class="modal-overlay" id="modalAuth">
+    <!-- Coin Info -->
+    <div class="hub-info-bar">
+      <div class="hub-info-item">🪙 <strong>코인 보상</strong> - 난이도가 높을수록 더 많은 코인 획득!</div>
+      <div class="hub-info-item">🛍️ <strong>스킨 상점</strong> - 코인으로 바둑판·돌 스킨 구매</div>
+      <div class="hub-info-item">🏆 <strong>전적 관리</strong> - 게임별 승/패 기록 자동 저장</div>
+    </div>
+  </main>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="hubModalAuth">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title" id="authModalTitle">회원 서비스</h3>
-        <button class="modal-close" data-close>&times;</button>
+        <h3 class="modal-title">회원 서비스</h3>
+        <button class="modal-close" onclick="closeHubModal('hubModalAuth')">&times;</button>
       </div>
-
       <div class="tab-headers">
-        <button class="tab-btn active" id="tabBtnLogin">로그인</button>
-        <button class="tab-btn" id="tabBtnRegister">회원가입</button>
+        <button class="tab-btn active" id="hubTabLogin" onclick="switchAuthTab('login')">로그인</button>
+        <button class="tab-btn" id="hubTabRegister" onclick="switchAuthTab('register')">회원가입</button>
       </div>
-
-      <!-- Login Form -->
-      <form id="formLogin">
+      <form id="hubFormLogin">
         <div class="form-group">
           <label class="form-label">아이디</label>
-          <input type="text" class="form-input" id="loginUsername" placeholder="아이디 입력" required autocomplete="username">
+          <input type="text" class="form-input" id="hubLoginUsername" placeholder="아이디 입력" required>
         </div>
         <div class="form-group">
           <label class="form-label">비밀번호</label>
-          <input type="password" class="form-input" id="loginPassword" placeholder="비밀번호 입력" required autocomplete="current-password">
+          <input type="password" class="form-input" id="hubLoginPassword" placeholder="비밀번호 입력" required>
         </div>
-        <div class="form-error" id="loginError"></div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;">로그인</button>
+        <div class="form-error" id="hubLoginError"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:10px;">로그인</button>
       </form>
-
-      <!-- Register Form -->
-      <form id="formRegister" style="display: none;">
+      <form id="hubFormRegister" style="display:none">
         <div class="form-group">
           <label class="form-label">아이디</label>
-          <input type="text" class="form-input" id="regUsername" placeholder="3자 이상 영문/숫자" required autocomplete="username">
+          <input type="text" class="form-input" id="hubRegUsername" placeholder="3자 이상 영문/숫자" required>
         </div>
         <div class="form-group">
           <label class="form-label">닉네임</label>
-          <input type="text" class="form-input" id="regNickname" placeholder="대국에서 표시될 이름">
+          <input type="text" class="form-input" id="hubRegNickname" placeholder="대국에서 표시될 이름">
         </div>
         <div class="form-group">
           <label class="form-label">비밀번호</label>
-          <input type="password" class="form-input" id="regPassword" placeholder="4자 이상 입력" required autocomplete="new-password">
+          <input type="password" class="form-input" id="hubRegPassword" placeholder="4자 이상" required>
         </div>
-        <div class="form-error" id="regError"></div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;">회원가입 완료</button>
+        <div class="form-error" id="hubRegError"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:10px;">회원가입 완료</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: Game Result -->
-  <div class="modal-overlay" id="modalResult">
-    <div class="modal-card" style="text-align: center;">
-      <div style="font-size: 3rem; margin-bottom: 8px;" id="resultEmoji">🏆</div>
-      <h3 class="modal-title" id="resultTitle" style="font-size: 1.5rem; margin-bottom: 8px;">대국 종료</h3>
-      <p id="resultDetail" style="color: var(--text-muted); font-size: 1rem; line-height: 1.5; margin-bottom: 20px;">결과 상세</p>
-
-      <div id="resultScoreBreakdown" style="display: none; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: left; font-size: 0.9rem;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-          <span>흑 (집+사석):</span>
-          <strong id="resBlackTotal">0</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between;">
-          <span>백 (집+사석+덤):</span>
-          <strong id="resWhiteTotal">0</strong>
-        </div>
-      </div>
-
-      <!-- Coin Reward Display -->
-      <div id="resultCoinReward" style="display: none; background: linear-gradient(135deg, rgba(229,169,60,0.15), rgba(255,215,0,0.05)); border: 1px solid rgba(229,169,60,0.4); border-radius: 12px; padding: 12px; margin-bottom: 20px;">
-        <span style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 600;">승리 보상 획득!</span>
-        <div style="font-size: 1.5rem; font-weight: 800; color: #ffd700; margin-top: 4px;">
-          +<span id="resEarnedCoins">0</span> 🪙 코인
-        </div>
-      </div>
-
-      <div style="display: flex; gap: 10px; justify-content: center;">
-        <button class="btn btn-secondary" data-close>바둑판 보기</button>
-        <button class="btn btn-primary" id="btnResultNewGame">다음 대국 시작</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: Skin Shop -->
-  <div class="modal-overlay" id="modalShop">
-    <div class="modal-card" style="max-width: 600px; width: 95%;">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <h3 class="modal-title">스킨 상점</h3>
-          <div class="coin-badge">
-            <span class="coin-icon">🪙</span>
-            <span id="shopMyCoins" style="font-weight: 700; color: #ffd700;">300</span>
-          </div>
-        </div>
-        <button class="modal-close" data-close>&times;</button>
-      </div>
-
-      <div class="tab-headers">
-        <button class="tab-btn active" id="tabShopBoards">바둑판 스킨</button>
-        <button class="tab-btn" id="tabShopStones">바둑돌 스킨</button>
-      </div>
-
-      <!-- Boards List -->
-      <div id="shopBoardsContainer" class="shop-grid">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Stones List -->
-      <div id="shopStonesContainer" class="shop-grid" style="display: none;">
-        <!-- Rendered dynamically -->
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: My History & Stats -->
-  <div class="modal-overlay" id="modalHistory">
-    <div class="modal-card" style="max-width: 520px;">
-      <div class="modal-header">
-        <h3 class="modal-title">내 대국 전적 및 기록</h3>
-        <button class="modal-close" data-close>&times;</button>
-      </div>
-
-      <!-- Stats Summary -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px; text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--text-muted);">총 대국</div>
-          <div style="font-size: 1.3rem; font-weight: 700;" id="statTotalGames">0</div>
-        </div>
-        <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 8px; padding: 12px; text-align: center;">
-          <div style="font-size: 0.75rem; color: #4ade80;">승리 / 패배</div>
-          <div style="font-size: 1.3rem; font-weight: 700; color: #4ade80;" id="statWinLoss">0승 0패</div>
-        </div>
-        <div style="background: rgba(229, 169, 60, 0.08); border: 1px solid rgba(229, 169, 60, 0.2); border-radius: 8px; padding: 12px; text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--accent-gold);">승률</div>
-          <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-gold);" id="statWinRate">0%</div>
-        </div>
-      </div>
-
-      <!-- Difficulty breakdown -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; font-size: 0.78rem; text-align: center;">
-        <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-          <div style="color: #4ade80; font-weight: bold;">쉬움</div>
-          <div id="statDiffEasy" style="margin-top: 4px;">0승 0패</div>
-        </div>
-        <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-          <div style="color: #facc15; font-weight: bold;">보통</div>
-          <div id="statDiffNormal" style="margin-top: 4px;">0승 0패</div>
-        </div>
-        <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-          <div style="color: #f87171; font-weight: bold;">어려움</div>
-          <div id="statDiffHard" style="margin-top: 4px;">0승 0패</div>
-        </div>
-        <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-          <div style="color: #c084fc; font-weight: bold;">최대</div>
-          <div id="statDiffMax" style="margin-top: 4px;">0승 0패</div>
-        </div>
-      </div>
-
-      <h4 style="font-size: 0.95rem; margin-bottom: 10px;">최근 대국 목록</h4>
-      <div class="history-list" id="historyListContainer">
-        <div style="color: var(--text-muted); text-align: center; padding: 20px;">대국 기록이 없습니다.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/audio.js"></script>
-  <script src="js/baduk-engine.js"></script>
-  <script src="js/baduk-ai.js"></script>
   <script src="js/auth.js"></script>
-  <script src="js/app.js"></script>
+  <script>
+    // Auth integration
+    async function init() {
+      await authManager.checkAuth();
+      updateHubUI();
+    }
+
+    function updateHubUI() {
+      const user = authManager.user;
+      const coins = authManager.getCoins();
+      document.getElementById('hubCoins').textContent = coins;
+
+      if (user) {
+        document.getElementById('hubGuestSection').style.display = 'none';
+        document.getElementById('hubUserSection').style.display = 'flex';
+        const nick = user.nickname || user.username;
+        document.getElementById('hubAvatar').textContent = nick[0].toUpperCase();
+        document.getElementById('hubUserName').textContent = nick;
+      } else {
+        document.getElementById('hubGuestSection').style.display = 'block';
+        document.getElementById('hubUserSection').style.display = 'none';
+      }
+    }
+
+    authManager.onUserChange(updateHubUI);
+
+    function selectGame(gameId) {
+      window.location.href = `${gameId}.html`;
+    }
+
+    document.getElementById('hubBtnAuth').addEventListener('click', () => {
+      document.getElementById('hubModalAuth').classList.add('active');
+    });
+
+    document.getElementById('hubBtnLogout').addEventListener('click', async () => {
+      if (confirm('로그아웃 하시겠습니까?')) {
+        await authManager.logout();
+        updateHubUI();
+      }
+    });
+
+    document.getElementById('hubModalAuth').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('hubModalAuth')) {
+        closeHubModal('hubModalAuth');
+      }
+    });
+
+    function closeHubModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById('hubTabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('hubTabRegister').classList.toggle('active', tab === 'register');
+      document.getElementById('hubFormLogin').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('hubFormRegister').style.display = tab === 'register' ? 'block' : 'none';
+    }
+
+    document.getElementById('hubFormLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('hubLoginError').textContent = '';
+      try {
+        await authManager.login(
+          document.getElementById('hubLoginUsername').value.trim(),
+          document.getElementById('hubLoginPassword').value
+        );
+        closeHubModal('hubModalAuth');
+        updateHubUI();
+      } catch (err) {
+        document.getElementById('hubLoginError').textContent = err.message;
+      }
+    });
+
+    document.getElementById('hubFormRegister').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('hubRegError').textContent = '';
+      try {
+        await authManager.register(
+          document.getElementById('hubRegUsername').value.trim(),
+          document.getElementById('hubRegPassword').value,
+          document.getElementById('hubRegNickname').value.trim()
+        );
+        closeHubModal('hubModalAuth');
+        updateHubUI();
+      } catch (err) {
+        document.getElementById('hubRegError').textContent = err.message;
+      }
+    });
+
+    init();
+  </script>
 </body>
 </html>
