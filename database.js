@@ -98,9 +98,9 @@ class Database {
     return newUser;
   }
 
-  recordGameResult(userId, { difficulty, winner, playerColor, boardSize, movesCount, moves, reason }) {
+  recordGameResult(userId, { gameType = 'baduk', difficulty, winner, playerColor, boardSize, movesCount, moves, reason, result: explicitResult }) {
     const user = this.findUserById(userId);
-    const isWin = winner === playerColor;
+    const isWin = explicitResult === 'win' || (winner !== undefined && playerColor !== undefined && winner === playerColor);
     const diffKey = ['easy', 'normal', 'hard', 'max'].includes(difficulty) ? difficulty : 'normal';
 
     const COIN_REWARDS = {
@@ -148,6 +148,7 @@ class Database {
 
     const gameRecord = {
       id: 'g_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      gameType,
       userId: userId || 'guest',
       username: user ? user.username : '게스트',
       nickname: user ? user.nickname : '게스트',

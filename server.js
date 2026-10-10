@@ -163,17 +163,7 @@ app.get('/api/auth/me', (req, res) => {
 app.post('/api/games/record', (req, res) => {
   try {
     const user = getUserFromToken(req);
-    const { difficulty, winner, playerColor, boardSize, movesCount, moves, reason } = req.body;
-
-    const result = db.recordGameResult(user ? user.id : null, {
-      difficulty,
-      winner,
-      playerColor,
-      boardSize,
-      movesCount,
-      moves,
-      reason
-    });
+    const result = db.recordGameResult(user ? user.id : null, req.body);
 
     res.json({
       success: true,

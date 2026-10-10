@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 체스 대국 - 보드게임 마스터</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo-area" id="btnLogo" onclick="location.href='index.html'" title="게임 로비로 이동">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #5b21b6, #a78bfa); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 15px;">♟️</div>
+      <h1 class="logo-title">AI 체스 <span style="font-size: 0.8rem; color: #a78bfa; margin-left: 6px;">[로비로 나가기]</span></h1>
+    </div>
+
+    <div class="header-actions">
+      <!-- Coin Badge -->
+      <div class="coin-badge-header">
+        <span>🪙</span>
+        <span id="headerCoins">0</span>
+      </div>
+
+      <button class="btn btn-primary" id="btnOpenNewGameModal" style="background: linear-gradient(135deg, #5b21b6, #8b5cf6);">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        새 대국
+      </button>
+
+      <!-- Guest Section -->
+      <div id="guestSection" style="display: flex; gap: 8px;">
+        <button class="btn btn-secondary" id="btnOpenAuthModal">로그인 / 회원가입</button>
+      </div>
+
+      <!-- User Section -->
+      <div id="userSection" style="display: none; align-items: center; gap: 10px;">
+        <div class="user-badge" id="btnOpenProfileModal" style="cursor: pointer;">
+          <div class="user-avatar" id="headerAvatar">U</div>
+          <span class="user-name" id="headerUserName">사용자</span>
+          <span class="user-record" id="headerUserRecord">0승 0패</span>
+        </div>
+        <button class="btn btn-icon" id="btnLogout" title="로그아웃">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Workspace -->
+  <main class="main-container">
+    <section class="board-section">
+      <div class="board-wrapper">
+        <canvas id="chessCanvas" width="580" height="580"></canvas>
+      </div>
+    </section>
+
+    <!-- Side Panel -->
+    <aside class="side-panel">
+      <div class="card">
+        <div class="match-status-header">
+          <div class="match-tag" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa;">체스 AI 대국</div>
+          <div class="diff-badge" id="currentDiffBadge">보통</div>
+        </div>
+
+        <div class="players-box">
+          <div class="player-row active" id="playerRowWhite">
+            <div class="player-avatar white">
+              <span style="font-size: 20px;">♔</span>
+            </div>
+            <div class="player-info">
+              <div class="player-name" id="nameWhite">나 (백)</div>
+              <div class="player-role" id="roleWhite">선착</div>
+            </div>
+          </div>
+
+          <div class="player-row" id="playerRowBlack">
+            <div class="player-avatar black">
+              <span style="font-size: 20px; color: #fff;">♚</span>
+            </div>
+            <div class="player-info">
+              <div class="player-name" id="nameBlack">AI 체스 (흑)</div>
+              <div class="player-role" id="roleBlack">후착</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="turn-banner" id="turnStatusBanner">
+          <span class="turn-dot"></span>
+          <span id="turnStatusText">내 차례입니다. 기물을 선택하세요.</span>
+        </div>
+      </div>
+
+      <div class="card actions-card">
+        <div class="action-grid" style="grid-template-columns: 1fr 1fr;">
+          <button class="btn btn-secondary" id="btnUndo">
+            <span>무르기 (Undo)</span>
+          </button>
+          <button class="btn btn-danger" id="btnResign">
+            <span>기권하기</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card options-card">
+        <label class="toggle-label">
+          <span>기물 이동 경로 표시</span>
+          <input type="checkbox" id="chkShowHints" checked>
+        </label>
+        <label class="toggle-label">
+          <span>체스 효과음</span>
+          <input type="checkbox" id="chkSound" checked>
+        </label>
+      </div>
+    </aside>
+  </main>
+
+  <!-- MODAL: New Game -->
+  <div class="modal-overlay" id="modalNewGame">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">새 체스 대국 설정</h3>
+        <button class="modal-close" onclick="document.getElementById('modalNewGame').classList.remove('active')">&times;</button>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-title">AI 난이도</label>
+        <div class="segmented-control" id="diffSelection">
+          <button class="seg-btn" data-val="easy">쉬움 (+100🪙)</button>
+          <button class="seg-btn active" data-val="normal">보통 (+300🪙)</button>
+          <button class="seg-btn" data-val="hard">어려움 (+800🪙)</button>
+          <button class="seg-btn" data-val="max">최대 (+1500🪙)</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-title">내 기물 색상</label>
+        <div class="segmented-control" id="colorSelection">
+          <button class="seg-btn active" data-val="w">백 (White - 선착)</button>
+          <button class="seg-btn" data-val="b">흑 (Black - 후착)</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btnStartGame" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px; background: linear-gradient(135deg, #5b21b6, #8b5cf6);">대국 시작하기</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Game Result -->
+  <div class="modal-overlay" id="modalResult">
+    <div class="modal-card" style="text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 8px;" id="resultEmoji">🎉</div>
+      <h3 class="modal-title" id="resultTitle" style="font-size: 1.5rem; margin-bottom: 8px;">대국 종료</h3>
+      <p id="resultDetail" style="color: var(--text-muted); font-size: 1rem; line-height: 1.5; margin-bottom: 20px;">결과</p>
+
+      <div id="resultCoinReward" style="margin-bottom: 20px; font-size: 1.2rem; font-weight: bold; color: var(--accent-gold);">
+        🪙 <span id="resEarnedCoins">+300</span> 코인 획득!
+      </div>
+
+      <button class="btn btn-primary" id="btnResultNewGame" style="width: 100%; justify-content: center; padding: 12px; background: linear-gradient(135deg, #5b21b6, #8b5cf6);">새 대국 시작</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Auth -->
+  <div class="modal-overlay" id="modalAuth">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">로그인 / 회원가입</h3>
+        <button class="modal-close" onclick="document.getElementById('modalAuth').classList.remove('active')">&times;</button>
+      </div>
+
+      <div class="tab-headers">
+        <button class="tab-btn active" id="tabBtnLogin">로그인</button>
+        <button class="tab-btn" id="tabBtnRegister">회원가입</button>
+      </div>
+
+      <form id="formLogin">
+        <div class="form-group">
+          <label class="form-label">아이디</label>
+          <input type="text" class="form-input" id="loginUsername" placeholder="아이디 입력" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">비밀번호</label>
+          <input type="password" class="form-input" id="loginPassword" placeholder="비밀번호 입력" required>
+        </div>
+        <div class="form-error" id="loginError"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;">로그인</button>
+      </form>
+
+      <form id="formRegister" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">아이디</label>
+          <input type="text" class="form-input" id="regUsername" placeholder="3자 이상" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">닉네임</label>
+          <input type="text" class="form-input" id="regNickname" placeholder="닉네임">
+        </div>
+        <div class="form-group">
+          <label class="form-label">비밀번호</label>
+          <input type="password" class="form-input" id="regPassword" placeholder="4자 이상" required>
+        </div>
+        <div class="form-error" id="regError"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;">회원가입 완료</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/chess-engine.js"></script>
+  <script src="js/chess-ai.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/chess-app.js"></script>
+</body>
+</html>
