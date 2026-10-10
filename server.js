@@ -236,6 +236,12 @@ app.get('/api/games/my-history', (req, res) => {
   res.json({ games });
 });
 
+// Explicit routes for games without .html
+app.get('/baduk', (req, res) => res.sendFile(path.join(__dirname, 'public', 'baduk.html')));
+app.get('/omok', (req, res) => res.sendFile(path.join(__dirname, 'public', 'omok.html')));
+app.get('/chess', (req, res) => res.sendFile(path.join(__dirname, 'public', 'chess.html')));
+app.get('/janggi', (req, res) => res.sendFile(path.join(__dirname, 'public', 'janggi.html')));
+
 // Serve frontend fallback
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

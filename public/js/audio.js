@@ -175,11 +175,12 @@ class SoundManager {
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
 
-        osc.start(startTime);
-        osc.stop(startTime + 0.31);
-      });
-    } catch (e) {}
-  }
+  // Aliases for multi-game compatibility
+  playStoneSound() { this.playStone(); }
+  playWinSound() { this.playWin(); }
+  playLoseSound() { this.playLose(); }
+  playCaptureSound() { this.playCapture(); }
+  playPassSound() { this.playPass(); }
 }
 
 window.soundManager = new SoundManager();

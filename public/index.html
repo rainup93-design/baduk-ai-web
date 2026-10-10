@@ -46,7 +46,7 @@
   <main class="hub-main">
     <div class="game-grid">
       <!-- 바둑 -->
-      <div class="game-card" data-game="baduk" onclick="selectGame('baduk')">
+      <div class="game-card" data-game="baduk" onclick="location.href='baduk.html'">
         <div class="game-card-bg" style="background: linear-gradient(135deg, #c0843e, #e4ab65);"></div>
         <div class="game-card-inner">
           <div class="game-emoji">⚫</div>
@@ -57,12 +57,12 @@
             <span class="badge">9×9</span>
             <span class="badge coin-badge-sm">최대 +2000🪙</span>
           </div>
-          <button class="game-btn">대국 시작</button>
+          <a href="baduk.html" class="game-btn" style="text-decoration:none; display:inline-block; text-align:center;">대국 시작</a>
         </div>
       </div>
 
       <!-- 오목 -->
-      <div class="game-card" data-game="omok" onclick="selectGame('omok')">
+      <div class="game-card" data-game="omok" onclick="location.href='omok.html'">
         <div class="game-card-bg" style="background: linear-gradient(135deg, #15803d, #4ade80);"></div>
         <div class="game-card-inner">
           <div class="game-emoji">⭕</div>
@@ -73,12 +73,12 @@
             <span class="badge">5목 승리</span>
             <span class="badge coin-badge-sm">최대 +1500🪙</span>
           </div>
-          <button class="game-btn" style="background: linear-gradient(135deg, #15803d, #22c55e);">대국 시작</button>
+          <a href="omok.html" class="game-btn" style="text-decoration:none; display:inline-block; text-align:center; background: linear-gradient(135deg, #15803d, #22c55e);">대국 시작</a>
         </div>
       </div>
 
       <!-- 장기 -->
-      <div class="game-card" data-game="janggi" onclick="selectGame('janggi')">
+      <div class="game-card" data-game="janggi" onclick="location.href='janggi.html'">
         <div class="game-card-bg" style="background: linear-gradient(135deg, #b91c1c, #f87171);"></div>
         <div class="game-card-inner">
           <div class="game-emoji">🀄</div>
@@ -89,12 +89,12 @@
             <span class="badge">한국 전통</span>
             <span class="badge coin-badge-sm">최대 +1500🪙</span>
           </div>
-          <button class="game-btn" style="background: linear-gradient(135deg, #b91c1c, #ef4444);">대국 시작</button>
+          <a href="janggi.html" class="game-btn" style="text-decoration:none; display:inline-block; text-align:center; background: linear-gradient(135deg, #b91c1c, #ef4444);">대국 시작</a>
         </div>
       </div>
 
       <!-- 체스 -->
-      <div class="game-card" data-game="chess" onclick="selectGame('chess')">
+      <div class="game-card" data-game="chess" onclick="location.href='chess.html'">
         <div class="game-card-bg" style="background: linear-gradient(135deg, #5b21b6, #a78bfa);"></div>
         <div class="game-card-inner">
           <div class="game-emoji">♟️</div>
@@ -105,7 +105,7 @@
             <span class="badge">국제 표준</span>
             <span class="badge coin-badge-sm">최대 +1500🪙</span>
           </div>
-          <button class="game-btn" style="background: linear-gradient(135deg, #5b21b6, #8b5cf6);">대국 시작</button>
+          <a href="chess.html" class="game-btn" style="text-decoration:none; display:inline-block; text-align:center; background: linear-gradient(135deg, #5b21b6, #8b5cf6);">대국 시작</a>
         </div>
       </div>
     </div>

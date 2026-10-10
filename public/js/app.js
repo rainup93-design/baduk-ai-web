@@ -764,29 +764,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setupChoiceGroup(container, callback) {
-    const cards = container.querySelectorAll('.choice-card');
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        callback(card);
+    if (!container) return;
+    const items = container.querySelectorAll('.choice-card, .seg-btn');
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        items.forEach(c => {
+          c.classList.remove('selected');
+          c.classList.remove('active');
+        });
+        item.classList.add('selected');
+        item.classList.add('active');
+        callback(item);
       });
     });
   }
 
-  setupChoiceGroup(diffSelection, (card) => {
-    config.difficulty = card.dataset.diff;
+  setupChoiceGroup(diffSelection, (item) => {
+    config.difficulty = item.dataset.val || item.dataset.diff || config.difficulty;
   });
 
-  setupChoiceGroup(sizeSelection, (card) => {
-    config.boardSize = parseInt(card.dataset.size, 10);
+  setupChoiceGroup(sizeSelection, (item) => {
+    config.boardSize = parseInt(item.dataset.val || item.dataset.size, 10) || config.boardSize;
   });
 
-  setupChoiceGroup(colorSelection, (card) => {
-    config.playerColor = card.dataset.color === 'black' ? _BLACK : _WHITE;
+  setupChoiceGroup(colorSelection, (item) => {
+    const v = item.dataset.val || item.dataset.color;
+    config.playerColor = (v === '1' || v === 'black') ? _BLACK : _WHITE;
   });
 
   btnStartGame.addEventListener('click', () => {
+    // Read currently active values directly
+    if (diffSelection) {
+      const activeDiff = diffSelection.querySelector('.active, .selected');
+      if (activeDiff) config.difficulty = activeDiff.dataset.val || activeDiff.dataset.diff || config.difficulty;
+    }
+    if (sizeSelection) {
+      const activeSize = sizeSelection.querySelector('.active, .selected');
+      if (activeSize) config.boardSize = parseInt(activeSize.dataset.val || activeSize.dataset.size, 10) || config.boardSize;
+    }
+    if (colorSelection) {
+      const activeColor = colorSelection.querySelector('.active, .selected');
+      if (activeColor) {
+        const v = activeColor.dataset.val || activeColor.dataset.color;
+        config.playerColor = (v === '1' || v === 'black') ? _BLACK : _WHITE;
+      }
+    }
     closeModal(modalNewGame);
     startNewGame();
   });
