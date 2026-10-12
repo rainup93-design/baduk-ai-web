@@ -3,7 +3,24 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('./database');
+
+// Safely load database - won't crash server if file I/O fails on Render
+let db;
+try {
+  db = require('./database');
+} catch (err) {
+  console.error('[Server] Database load error:', err.message);
+  // Provide a no-op fallback database so the server can still serve game pages
+  db = {
+    findUserByUsername: () => null,
+    findUserById: () => null,
+    createUser: (u) => u,
+    recordGameResult: () => ({ gameRecord: {}, earnedCoins: 0, userCoins: 0, userStats: null }),
+    buySkin: () => { throw new Error('서버 DB 오류'); },
+    equipSkin: () => { throw new Error('서버 DB 오류'); },
+    getUserGames: () => []
+  };
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -236,14 +253,23 @@ app.get('/api/games/my-history', (req, res) => {
   res.json({ games });
 });
 
-// Explicit routes for games without .html
+// Explicit routes for games (with and without .html extension)
 app.get('/baduk', (req, res) => res.sendFile(path.join(__dirname, 'public', 'baduk.html')));
+app.get('/baduk.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'baduk.html')));
 app.get('/omok', (req, res) => res.sendFile(path.join(__dirname, 'public', 'omok.html')));
+app.get('/omok.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'omok.html')));
 app.get('/chess', (req, res) => res.sendFile(path.join(__dirname, 'public', 'chess.html')));
+app.get('/chess.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'chess.html')));
 app.get('/janggi', (req, res) => res.sendFile(path.join(__dirname, 'public', 'janggi.html')));
+app.get('/janggi.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'janggi.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
-// Serve frontend fallback
+// Serve frontend fallback (only for non-API, non-static routes)
 app.get('*', (req, res) => {
+  // Don't fallback for API routes or static asset requests
+  if (req.path.startsWith('/api/') || req.path.match(/\.(js|css|png|jpg|ico|woff|woff2|ttf|svg)$/)) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

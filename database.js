@@ -5,8 +5,13 @@ const DATA_DIR = path.join(__dirname, 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const GAMES_FILE = path.join(DATA_DIR, 'games.json');
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+// Attempt to create data directory (non-fatal if it fails on read-only filesystems like Render)
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (err) {
+  console.warn('[DB] Could not create data directory (read-only filesystem?). Running in memory-only mode:', err.message);
 }
 
 function loadData(filePath, defaultData) {
