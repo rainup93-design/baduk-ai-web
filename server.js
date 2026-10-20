@@ -146,18 +146,20 @@ app.post('/api/auth/logout', (req, res) => {
 // Shop Catalog
 const SHOP_ITEMS = {
   boards: [
-    { id: 'kaya', name: '전통 비자목', desc: '따뜻한 황금빛 나뭇결의 최고급 전통 바둑판', price: 0 },
-    { id: 'ebony', name: '흑단목 다크우드', desc: '중후하고 세련된 블랙 우드와 골드 라인', price: 500 },
-    { id: 'emerald', name: '에메랄드 옥석', desc: '신비롭고 맑은 비취색 대리석 바둑판', price: 1200 },
-    { id: 'sakura', name: '벚꽃 핑크우드', desc: '화사하고 부드러운 벚꽃빛 원목 바둑판', price: 1500 },
-    { id: 'neon', name: '사이버 네온', desc: '미래형 사이버펑크 감성의 발광 네온 그리드', price: 2500 }
+    { id: 'kaya', name: '전통 비자목', desc: '따뜻한 황금빛 나뭇결의 최고급 전통 바둑판', price: 0, tag: '기본' },
+    { id: 'ebony', name: '흑단목 다크우드', desc: '중후하고 세련된 블랙 우드와 골드 라인', price: 500, tag: '인기' },
+    { id: 'emerald', name: '에메랄드 옥석', desc: '신비롭고 맑은 비취색 대리석 바둑판', price: 1200, tag: '고급' },
+    { id: 'sakura', name: '벚꽃 핑크우드', desc: '화사하고 부드러운 벚꽃빛 원목 바둑판', price: 1500, tag: '스페셜' },
+    { id: 'neon', name: '사이버 네온', desc: '미래형 사이버펑크 감성의 발광 네온 그리드', price: 2500, tag: '사이버' },
+    { id: 'galaxy', name: '은하수 코스믹', desc: '우주의 신비로운 성운과 반짝이는 별빛 바둑판', price: 3500, tag: '레전드' }
   ],
   stones: [
-    { id: 'classic', name: '전통 조개 & 오석', desc: '묵직한 흑요석과 영롱한 백조개알의 전통 바둑돌', price: 0 },
-    { id: 'metal', name: '골드 & 실버 메탈', desc: '황금빛 24K 골드와 눈부신 크롬 실버 메탈릭 돌', price: 600 },
-    { id: 'gemstone', name: '루비 & 사파이어', desc: '불꽃의 붉은 루비와 푸른 바다빛 사파이어 보석', price: 1500 },
-    { id: 'neon', name: '네온 사이버 글로우', desc: '어둠 속에서 찬란하게 빛나는 네온 발광 돌', price: 2200 },
-    { id: 'galaxy', name: '갤럭시 코스믹 별빛', desc: '우주 은하수와 별빛을 머금은 신비로운 돌', price: 3500 }
+    { id: 'classic', name: '전통 조개 & 오석', desc: '묵직한 흑요석과 영롱한 백조개알의 전통 바둑돌', price: 0, tag: '기본' },
+    { id: 'metal', name: '골드 & 실버 메탈', desc: '황금빛 24K 골드와 눈부신 크롬 실버 메탈릭 돌', price: 600, tag: '인기' },
+    { id: 'gemstone', name: '루비 & 사파이어', desc: '불꽃의 붉은 루비와 푸른 바다빛 사파이어 보석', price: 1500, tag: '보석' },
+    { id: 'neon', name: '네온 사이버 글로우', desc: '어둠 속에서 찬란하게 빛나는 네온 발광 돌', price: 2200, tag: '사이버' },
+    { id: 'galaxy', name: '갤럭시 코스믹 별빛', desc: '우주 은하수와 별빛을 머금은 신비로운 돌', price: 3500, tag: '레전드' },
+    { id: 'crystal', name: '크리스탈 다이아몬드', desc: '영롱하게 투과되는 다이아몬드 & 흑요석 결정체', price: 4500, tag: '미스틱' }
   ]
 };
 

@@ -175,6 +175,55 @@ class SoundManager {
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
 
+        osc.start(startTime);
+        osc.stop(startTime + 0.31);
+      });
+    } catch (e) {}
+  }
+
+  playPurchase() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+    try {
+      const t = this.audioCtx.currentTime;
+      // Bright triumphant coin/purchase sound
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+        const startTime = t + idx * 0.07;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.36);
+      });
+    } catch (e) {}
+  }
+
+  playEquip() {
+    if (this.muted) return;
+    this.init();
+    if (!this.audioCtx) return;
+    try {
+      const t = this.audioCtx.currentTime;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(659.25, t);
+      osc.frequency.exponentialRampToValueAtTime(987.77, t + 0.12);
+      gain.gain.setValueAtTime(0.35, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.21);
+    } catch (e) {}
+  }
+
   // Aliases for multi-game compatibility
   playStoneSound() { this.playStone(); }
   playWinSound() { this.playWin(); }

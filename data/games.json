@@ -1,5 +1,17 @@
 [
   {
+    "id": "g_1792489156380_udcc4",
+    "gameType": "omok",
+    "userId": "guest",
+    "username": "게스트",
+    "nickname": "게스트",
+    "difficulty": "max",
+    "isWin": true,
+    "earnedCoins": 2000,
+    "moves": 21,
+    "createdAt": "2026-10-20T09:39:16.380Z"
+  },
+  {
     "id": "g_1791017141012_bogrk",
     "userId": "guest",
     "username": "게스트",

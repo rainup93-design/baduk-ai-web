@@ -2,10 +2,13 @@
 // Features: Complete Go rules, 4 AI Difficulties, Win on AI no moves, Coin rewards, Skin Shop
 
 document.addEventListener('DOMContentLoaded', () => {
+  const _EMPTY = (typeof window !== 'undefined' && window.EMPTY !== undefined) ? window.EMPTY : 0;
   const _BLACK = (typeof window !== 'undefined' && window.BLACK !== undefined) ? window.BLACK : 1;
   const _WHITE = (typeof window !== 'undefined' && window.WHITE !== undefined) ? window.WHITE : 2;
   const Engine = (typeof window !== 'undefined' && window.BadukEngine) ? window.BadukEngine : BadukEngine;
   const AI = (typeof window !== 'undefined' && window.BadukAI) ? window.BadukAI : BadukAI;
+  // Alias for backward-compatible references within this scope
+  const EMPTY = _EMPTY;
 
   // Game Configuration State
   let config = {
@@ -158,6 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
       lineColor: '#00f2fe',
       starColor: '#ff0844',
       borderColor: '#4facfe'
+    },
+    galaxy: {
+      name: '은하수 코스믹',
+      bgGrad: ['#1a0933', '#100522', '#080112'],
+      grainColor: 'rgba(235, 130, 255, 0.06)',
+      lineColor: '#c084fc',
+      starColor: '#f43f5e',
+      borderColor: '#a855f7'
     }
   };
 
@@ -435,6 +446,25 @@ document.addEventListener('DOMContentLoaded', () => {
         radGrad.addColorStop(1, '#5a189a');
         targetCtx.fillStyle = radGrad;
       }
+    } else if (skinKey === 'crystal') {
+      // Prism Diamond & Smokey Obsidian
+      if (isBlack) {
+        const radGrad = targetCtx.createRadialGradient(x - radius * 0.3, y - radius * 0.3, radius * 0.05, x, y, radius);
+        radGrad.addColorStop(0, '#94a3b8');
+        radGrad.addColorStop(0.3, '#334155');
+        radGrad.addColorStop(0.7, '#1e293b');
+        radGrad.addColorStop(1, '#020617');
+        targetCtx.fillStyle = radGrad;
+      } else {
+        targetCtx.shadowColor = '#67e8f9';
+        targetCtx.shadowBlur = Math.max(6, radius * 0.5);
+        const radGrad = targetCtx.createRadialGradient(x - radius * 0.3, y - radius * 0.3, radius * 0.05, x, y, radius);
+        radGrad.addColorStop(0, '#ffffff');
+        radGrad.addColorStop(0.3, '#ecfeff');
+        radGrad.addColorStop(0.7, '#a5f3fc');
+        radGrad.addColorStop(1, '#06b6d4');
+        targetCtx.fillStyle = radGrad;
+      }
     } else {
       // Classic Shell & Slate
       if (isBlack) {
@@ -505,14 +535,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const diffNames = {
-      easy: { text: '쉬움 난이도 (+100🪙)', cls: 'diff-easy' },
-      normal: { text: '보통 난이도 (+300🪙)', cls: 'diff-normal' },
-      hard: { text: '어려움 난이도 (+800🪙)', cls: 'diff-hard' },
-      max: { text: '최대 난이도 (+2000🪙)', cls: 'diff-max' }
+      easy: { text: '쉬움', cls: 'diff-easy' },
+      normal: { text: '보통', cls: 'diff-normal' },
+      hard: { text: '어려움', cls: 'diff-hard' },
+      max: { text: '최대', cls: 'diff-max' }
     };
     const curDiff = diffNames[config.difficulty] || diffNames.normal;
     currentDiffBadge.textContent = curDiff.text;
-    currentDiffBadge.className = `difficulty-badge ${curDiff.cls}`;
+    currentDiffBadge.className = `diff-badge ${curDiff.cls}`;
 
     const isPlayerBlack = config.playerColor === _BLACK;
     const userName = authManager.user ? authManager.user.nickname : '나';
@@ -738,12 +768,44 @@ document.addEventListener('DOMContentLoaded', () => {
     drawBoard();
   });
 
-  canvas.addEventListener('click', () => {
+  function getCanvasCoord(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const pixelX = (clientX - rect.left) * scaleX;
+    const pixelY = (clientY - rect.top) * scaleY;
+    return getBoardCoord(pixelX, pixelY);
+  }
+
+  canvas.addEventListener('click', (e) => {
     soundManager.init();
-    if (hoverCoord) {
-      handleHumanMove(hoverCoord.r, hoverCoord.c);
+    const coord = getCanvasCoord(e);
+    if (coord) {
+      handleHumanMove(coord.r, coord.c);
     }
   });
+
+  // Touch support for mobile
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    soundManager.init();
+    const coord = getCanvasCoord(e);
+    if (coord) {
+      hoverCoord = coord;
+      handleHumanMove(coord.r, coord.c);
+    }
+  }, { passive: false });
 
   // ----------------------------------------------------
   // New Game Setup
@@ -1117,24 +1179,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  btnOpenShopModal.addEventListener('click', () => {
-    renderShop();
-    openModal(modalShop);
-  });
+  if (btnOpenShopModal) {
+    btnOpenShopModal.addEventListener('click', () => {
+      if (typeof SkinSystem !== 'undefined') {
+        SkinSystem.openShopModal();
+      } else {
+        renderShop();
+        openModal(modalShop);
+      }
+    });
+  }
 
-  tabShopBoards.addEventListener('click', () => {
-    tabShopBoards.classList.add('active');
-    tabShopStones.classList.remove('active');
-    shopBoardsContainer.style.display = 'grid';
-    shopStonesContainer.style.display = 'none';
-  });
+  const btnOpenShop = document.getElementById('btnOpenShop');
+  if (btnOpenShop) {
+    btnOpenShop.addEventListener('click', () => {
+      if (typeof SkinSystem !== 'undefined') {
+        SkinSystem.openShopModal();
+      } else {
+        renderShop();
+        openModal(modalShop);
+      }
+    });
+  }
 
-  tabShopStones.addEventListener('click', () => {
-    tabShopStones.classList.add('active');
-    tabShopBoards.classList.remove('active');
-    shopStonesContainer.style.display = 'grid';
-    shopBoardsContainer.style.display = 'none';
-  });
+  if (typeof SkinSystem !== 'undefined') {
+    SkinSystem.onSkinChange(() => {
+      drawBoard();
+    });
+  }
+
+  if (tabShopBoards) {
+    tabShopBoards.addEventListener('click', () => {
+      tabShopBoards.classList.add('active');
+      tabShopStones.classList.remove('active');
+      shopBoardsContainer.style.display = 'grid';
+      shopStonesContainer.style.display = 'none';
+    });
+  }
+
+  if (tabShopStones) {
+    tabShopStones.addEventListener('click', () => {
+      tabShopStones.classList.add('active');
+      tabShopBoards.classList.remove('active');
+      shopStonesContainer.style.display = 'grid';
+      shopBoardsContainer.style.display = 'none';
+    });
+  }
 
   // History modal
   async function showHistoryModal() {

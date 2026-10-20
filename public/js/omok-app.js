@@ -85,15 +85,29 @@ document.addEventListener('DOMContentLoaded', () => {
   function drawBoard() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Board wood background
-    const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    bgGrad.addColorStop(0, '#e8af69');
-    bgGrad.addColorStop(1, '#c2853f');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const equipped = (typeof authManager !== 'undefined') ? authManager.getEquipped() : { board: 'kaya', stone: 'classic' };
+    const boardKey = equipped.board || 'kaya';
+    const theme = (typeof SkinSystem !== 'undefined')
+      ? SkinSystem.drawBoardBackground(ctx, canvas.width, canvas.height, boardKey)
+      : null;
+
+    if (!theme) {
+      const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      bgGrad.addColorStop(0, '#e8af69');
+      bgGrad.addColorStop(1, '#c2853f');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Outer border
+    if (theme && theme.borderColor) {
+      ctx.strokeStyle = theme.borderColor;
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(margin, margin, canvas.width - margin * 2, canvas.height - margin * 2);
+    }
 
     // Grid lines
-    ctx.strokeStyle = '#432d16';
+    ctx.strokeStyle = theme ? theme.lineColor : '#432d16';
     ctx.lineWidth = 1.2;
     for (let i = 0; i < 15; i++) {
       // Horizontal
@@ -111,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Star points (화점: 3, 7, 11)
     const starPoints = [3, 7, 11];
-    ctx.fillStyle = '#432d16';
+    ctx.fillStyle = theme ? theme.starColor : '#432d16';
     for (const r of starPoints) {
       for (const c of starPoints) {
         const pt = getPixelCoord(r, c);
@@ -183,6 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function drawStone(x, y, color) {
     const radius = cellSize * 0.43;
+    const equipped = (typeof authManager !== 'undefined') ? authManager.getEquipped() : { stone: 'classic' };
+    const stoneKey = equipped.stone || 'classic';
+
+    if (typeof SkinSystem !== 'undefined') {
+      SkinSystem.drawStone(ctx, x, y, radius, color, stoneKey);
+      return;
+    }
+
     ctx.save();
     ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
     ctx.shadowBlur = 6;
@@ -489,5 +511,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   authManager.onUserChange(() => updateAuthDisplay());
+
+  if (typeof SkinSystem !== 'undefined') {
+    SkinSystem.onSkinChange(() => {
+      drawBoard();
+    });
+  }
+
   init();
 });

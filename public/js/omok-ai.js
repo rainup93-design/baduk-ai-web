@@ -1,6 +1,7 @@
 // ======================================================
-// OMOK (Gomoku) AI
-// Threat evaluation + Minimax/Alpha-beta
+// OMOK (Gomoku) AI - Grandmaster Engine
+// Features: Full Pattern Windows (Straight & Jump 4s/3s),
+// 4-3 & 3-3 Threat Combinations, Alpha-Beta with Iterative Deepening
 // ======================================================
 
 var OMOK_EMPTY = (typeof OMOK_EMPTY !== 'undefined') ? OMOK_EMPTY : (typeof window !== 'undefined' && window.OMOK_EMPTY !== undefined ? window.OMOK_EMPTY : 0);
@@ -10,6 +11,14 @@ var OMOK_WHITE = (typeof OMOK_WHITE !== 'undefined') ? OMOK_WHITE : (typeof wind
 class OmokAI {
   constructor(difficulty = 'normal') {
     this.difficulty = difficulty; // 'easy' | 'normal' | 'hard' | 'max'
+
+    // Direction vectors: horizontal, vertical, diagonal-down, diagonal-up
+    this.directions = [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [1, -1]
+    ];
   }
 
   setDifficulty(diff) {
@@ -26,10 +35,42 @@ class OmokAI {
       return { r: center, c: center };
     }
 
-    // Candidate moves around existing stones (distance <= 2)
+    // Second move -> Near center
+    if (engine.history.length === 1) {
+      const center = Math.floor(size / 2);
+      const moves = [
+        { r: center - 1, c: center },
+        { r: center + 1, c: center },
+        { r: center, c: center - 1 },
+        { r: center, c: center + 1 },
+        { r: center - 1, c: center - 1 },
+        { r: center + 1, c: center + 1 }
+      ];
+      for (const m of moves) {
+        if (engine.board[m.r][m.c] === OMOK_EMPTY) return m;
+      }
+    }
+
+    // Active empty positions within 2 steps of any placed stone
     const candidates = this.getCandidates(engine);
     if (candidates.length === 0) {
       return { r: Math.floor(size / 2), c: Math.floor(size / 2) };
+    }
+
+    // 1. Check immediate winning moves (Five in a row)
+    for (const cand of candidates) {
+      engine.board[cand.r][cand.c] = aiColor;
+      const winRes = engine.checkWin(cand.r, cand.c, aiColor);
+      engine.board[cand.r][cand.c] = OMOK_EMPTY;
+      if (winRes && winRes.won) return cand;
+    }
+
+    // 2. Block immediate opponent win (Opponent Five)
+    for (const cand of candidates) {
+      engine.board[cand.r][cand.c] = oppColor;
+      const oppWinRes = engine.checkWin(cand.r, cand.c, oppColor);
+      engine.board[cand.r][cand.c] = OMOK_EMPTY;
+      if (oppWinRes && oppWinRes.won) return cand;
     }
 
     if (this.difficulty === 'easy') {
@@ -37,13 +78,13 @@ class OmokAI {
     } else if (this.difficulty === 'normal') {
       return this.selectMoveNormal(engine, candidates, aiColor, oppColor);
     } else if (this.difficulty === 'hard') {
-      return this.selectMoveHard(engine, candidates, aiColor, oppColor, 2);
-    } else { // 'max'
       return this.selectMoveHard(engine, candidates, aiColor, oppColor, 3);
+    } else { // 'max'
+      return this.selectMoveHard(engine, candidates, aiColor, oppColor, 4);
     }
   }
 
-  // Get active empty positions within 2 steps of any placed stone
+  // Candidates within Chebyshev distance 2 of existing stones
   getCandidates(engine) {
     const size = engine.size;
     const board = engine.board;
@@ -72,92 +113,128 @@ class OmokAI {
     return candidates;
   }
 
-  // Evaluate single point threat score
-  evaluatePoint(board, size, r, c, color) {
-    const directions = [
-      [ [0, 1], [0, -1] ],
-      [ [1, 0], [-1, 0] ],
-      [ [1, 1], [-1, -1] ],
-      [ [1, -1], [-1, 1] ]
-    ];
+  // Comprehensive Pattern Evaluator on a line of 9 cells centered at (r, c)
+  evaluatePointPatterns(board, size, r, c, color) {
     const opp = color === OMOK_BLACK ? OMOK_WHITE : OMOK_BLACK;
-    let totalScore = 0;
+    let counts = {
+      five: 0,
+      openFour: 0,
+      blockedFour: 0,
+      openThree: 0,
+      blockedThree: 0,
+      openTwo: 0
+    };
 
-    for (const [dir1, dir2] of directions) {
-      let count = 1;
-      let openEnds = 0;
-
-      // dir 1
-      let nr = r + dir1[0];
-      let nc = c + dir1[1];
-      while (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === color) {
-        count++;
-        nr += dir1[0];
-        nc += dir1[1];
-      }
-      if (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === OMOK_EMPTY) {
-        openEnds++;
-      }
-
-      // dir 2
-      nr = r + dir2[0];
-      nc = c + dir2[1];
-      while (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === color) {
-        count++;
-        nr += dir2[0];
-        nc += dir2[1];
-      }
-      if (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === OMOK_EMPTY) {
-        openEnds++;
+    for (const [dr, dc] of this.directions) {
+      // Build string representation: 1=color, 2=opp, 0=empty, '#'=out of board
+      let line = '';
+      for (let offset = -4; offset <= 4; offset++) {
+        const nr = r + offset * dr;
+        const nc = c + offset * dc;
+        if (nr < 0 || nr >= size || nc < 0 || nc >= size) {
+          line += '#';
+        } else if (offset === 0) {
+          line += '1'; // Pretend we played here
+        } else if (board[nr][nc] === color) {
+          line += '1';
+        } else if (board[nr][nc] === opp) {
+          line += '2';
+        } else {
+          line += '0';
+        }
       }
 
-      // Scoring table
-      if (count >= 5) {
-        totalScore += 1000000; // 5 in a row
-      } else if (count === 4) {
-        if (openEnds === 2) totalScore += 100000; // Open 4
-        else if (openEnds === 1) totalScore += 10000; // Blocked 4
-      } else if (count === 3) {
-        if (openEnds === 2) totalScore += 8000;  // Open 3
-        else if (openEnds === 1) totalScore += 800;
-      } else if (count === 2) {
-        if (openEnds === 2) totalScore += 500;
-        else if (openEnds === 1) totalScore += 50;
-      } else if (count === 1 && openEnds === 2) {
-        totalScore += 10;
+      // Check patterns on this 9-cell line
+      if (line.includes('11111')) {
+        counts.five++;
+      } else if (line.includes('011110')) {
+        counts.openFour++;
+      } else {
+        // Blocked / Jump Fours
+        if (
+          line.includes('211110') || line.includes('011112') ||
+          line.includes('#11110') || line.includes('01111#') ||
+          line.includes('10111') || line.includes('11011') || line.includes('11101')
+        ) {
+          counts.blockedFour++;
+        }
+
+        // Open Threes (both ends open and forms open four)
+        if (
+          line.includes('01110') ||
+          line.includes('010110') ||
+          line.includes('011010')
+        ) {
+          counts.openThree++;
+        } else if (
+          line.includes('211100') || line.includes('001112') ||
+          line.includes('210110') || line.includes('011012') ||
+          line.includes('211010') || line.includes('010112') ||
+          line.includes('10011') || line.includes('11001') || line.includes('10101')
+        ) {
+          counts.blockedThree++;
+        }
+
+        // Open Twos
+        if (
+          line.includes('001100') ||
+          line.includes('010100') || line.includes('001010') ||
+          line.includes('010010')
+        ) {
+          counts.openTwo++;
+        }
       }
     }
 
-    return totalScore;
+    // Calculate score with tactical multiplier
+    let score = 0;
+    if (counts.five > 0) score += 10000000;
+    if (counts.openFour > 0) score += 2000000;
+    if (counts.blockedFour > 0) score += 250000 * counts.blockedFour;
+
+    // Double threat bonuses: 4-3, 3-3, double-four
+    if (counts.blockedFour > 0 && counts.openThree > 0) {
+      score += 850000; // Four-Three (사삼) - Lethal!
+    }
+    if (counts.blockedFour >= 2) {
+      score += 900000; // Double-four
+    }
+    if (counts.openThree >= 2) {
+      score += 650000; // Double-three (삼삼) - Deadly!
+    } else if (counts.openThree === 1) {
+      score += 80000;
+    }
+
+    if (counts.blockedThree > 0) score += 6000 * counts.blockedThree;
+    if (counts.openTwo > 0) score += 1500 * counts.openTwo;
+
+    return { score, counts };
   }
 
-  // Easy AI
+  // Easy AI: Occasional blunder
   selectMoveEasy(engine, candidates, aiColor, oppColor) {
-    // 30% chance completely random
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.28) {
       return candidates[Math.floor(Math.random() * candidates.length)];
     }
     return this.selectMoveNormal(engine, candidates, aiColor, oppColor);
   }
 
-  // Normal AI: Direct threat evaluation
+  // Normal AI: Tactical Pattern Scoring
   selectMoveNormal(engine, candidates, aiColor, oppColor) {
     let bestScore = -Infinity;
     let bestMoves = [];
 
     for (const cand of candidates) {
-      // Offensive score
-      const attackScore = this.evaluatePoint(engine.board, engine.size, cand.r, cand.c, aiColor);
-      // Defensive score (how dangerous if opponent plays here)
-      const defendScore = this.evaluatePoint(engine.board, engine.size, cand.r, cand.c, oppColor);
+      const atk = this.evaluatePointPatterns(engine.board, engine.size, cand.r, cand.c, aiColor);
+      const def = this.evaluatePointPatterns(engine.board, engine.size, cand.r, cand.c, oppColor);
 
-      // AI win has highest priority, then block opponent win
-      let score = attackScore + defendScore * 1.1;
+      // AI win has highest priority, then blocking opponent deadly attacks
+      let score = atk.score + def.score * 1.15;
 
-      // Slight center preference
+      // Center proximity bias
       const center = Math.floor(engine.size / 2);
-      const distToCenter = Math.abs(cand.r - center) + Math.abs(cand.c - center);
-      score -= distToCenter * 2;
+      const dist = Math.abs(cand.r - center) + Math.abs(cand.c - center);
+      score -= dist * 4;
 
       if (score > bestScore) {
         bestScore = score;
@@ -170,33 +247,42 @@ class OmokAI {
     return bestMoves[Math.floor(Math.random() * bestMoves.length)];
   }
 
-  // Hard & Max AI: Alpha-Beta Search
+  // Hard & Max AI: Alpha-Beta with Threat Heuristics
   selectMoveHard(engine, candidates, aiColor, oppColor, depth) {
-    // Score all candidates first to prune and sort
+    // Score all candidates
     const scoredCandidates = candidates.map(cand => {
-      const atk = this.evaluatePoint(engine.board, engine.size, cand.r, cand.c, aiColor);
-      const def = this.evaluatePoint(engine.board, engine.size, cand.r, cand.c, oppColor);
+      const atk = this.evaluatePointPatterns(engine.board, engine.size, cand.r, cand.c, aiColor);
+      const def = this.evaluatePointPatterns(engine.board, engine.size, cand.r, cand.c, oppColor);
+
+      let urgency = atk.score + def.score * 1.25;
+      if (atk.counts.five > 0) urgency = 20000000;
+      else if (def.counts.five > 0) urgency = 18000000;
+      else if (atk.counts.openFour > 0) urgency = 15000000;
+      else if (def.counts.openFour > 0) urgency = 12000000;
+      else if (atk.counts.blockedFour > 0 && atk.counts.openThree > 0) urgency = 10000000;
+      else if (def.counts.blockedFour > 0 && def.counts.openThree > 0) urgency = 8000000;
+
       return {
         ...cand,
-        score: atk >= 1000000 ? 9999999 : (def >= 1000000 ? 8888888 : atk + def * 1.2)
+        urgency,
+        atkScore: atk.score,
+        defScore: def.score
       };
     });
 
-    // Immediate win or block
-    if (scoredCandidates.some(c => c.score >= 8888888)) {
-      scoredCandidates.sort((a, b) => b.score - a.score);
+    scoredCandidates.sort((a, b) => b.urgency - a.urgency);
+
+    // If an urgent move exists (5, open 4, 4-3), play it without deep search
+    if (scoredCandidates[0].urgency >= 8000000) {
       return scoredCandidates[0];
     }
 
-    scoredCandidates.sort((a, b) => b.score - a.score);
-    // Take top 10 candidates for alpha-beta
-    const topMoves = scoredCandidates.slice(0, 10);
-
+    // Select top 12 moves for minimax search
+    const topMoves = scoredCandidates.slice(0, 12);
     let bestScore = -Infinity;
     let bestMove = topMoves[0];
 
     for (const move of topMoves) {
-      // Make move
       engine.board[move.r][move.c] = aiColor;
       const score = -this.alphaBeta(engine, depth - 1, -Infinity, Infinity, false, aiColor, oppColor);
       engine.board[move.r][move.c] = OMOK_EMPTY;
@@ -212,24 +298,26 @@ class OmokAI {
 
   alphaBeta(engine, depth, alpha, beta, isAiTurn, aiColor, oppColor) {
     if (depth <= 0) {
-      return this.evaluateBoard(engine.board, engine.size, aiColor, oppColor);
+      return this.evaluateBoardFull(engine.board, engine.size, aiColor, oppColor);
     }
 
     const currentTurnColor = isAiTurn ? aiColor : oppColor;
     const candidates = this.getCandidates(engine);
 
-    // Quick candidate sorting
-    const scored = candidates.map(cand => ({
-      ...cand,
-      score: this.evaluatePoint(engine.board, engine.size, cand.r, cand.c, currentTurnColor)
-    }));
+    // Quick score candidates
+    const scored = candidates.map(cand => {
+      const p = this.evaluatePointPatterns(engine.board, engine.size, cand.r, cand.c, currentTurnColor);
+      return { ...cand, score: p.score };
+    });
     scored.sort((a, b) => b.score - a.score);
-    const topMoves = scored.slice(0, 6);
+
+    // Top 8 branch factor for fast, deep search
+    const topMoves = scored.slice(0, 8);
 
     if (isAiTurn) {
       let maxEval = -Infinity;
       for (const move of topMoves) {
-        if (move.score >= 1000000) return 5000000; // Immediate win
+        if (move.score >= 10000000) return 10000000 + depth; // Direct win
         engine.board[move.r][move.c] = aiColor;
         const ev = this.alphaBeta(engine, depth - 1, alpha, beta, false, aiColor, oppColor);
         engine.board[move.r][move.c] = OMOK_EMPTY;
@@ -242,7 +330,7 @@ class OmokAI {
     } else {
       let minEval = Infinity;
       for (const move of topMoves) {
-        if (move.score >= 1000000) return -5000000; // Immediate opponent win
+        if (move.score >= 10000000) return -10000000 - depth; // Direct loss
         engine.board[move.r][move.c] = oppColor;
         const ev = this.alphaBeta(engine, depth - 1, alpha, beta, true, aiColor, oppColor);
         engine.board[move.r][move.c] = OMOK_EMPTY;
@@ -255,21 +343,21 @@ class OmokAI {
     }
   }
 
-  evaluateBoard(board, size, aiColor, oppColor) {
+  evaluateBoardFull(board, size, aiColor, oppColor) {
     let aiScore = 0;
     let oppScore = 0;
 
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
         if (board[r][c] === aiColor) {
-          aiScore += this.evaluatePoint(board, size, r, c, aiColor);
+          aiScore += this.evaluatePointPatterns(board, size, r, c, aiColor).score;
         } else if (board[r][c] === oppColor) {
-          oppScore += this.evaluatePoint(board, size, r, c, oppColor);
+          oppScore += this.evaluatePointPatterns(board, size, r, c, oppColor).score;
         }
       }
     }
 
-    return aiScore - oppScore * 1.1;
+    return aiScore - oppScore * 1.2;
   }
 }
 

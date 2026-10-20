@@ -16,10 +16,14 @@
     </div>
     <div class="hub-header-right">
       <!-- Coin Badge -->
-      <div class="coin-badge" id="hubCoinBadge">
+      <div class="coin-badge" id="hubCoinBadge" onclick="SkinSystem.openShopModal()" style="cursor: pointer;" title="스킨 상점 열기 (보유 코인)">
         <span>🪙</span>
         <span id="hubCoins">300</span>
       </div>
+      <!-- Shop Button -->
+      <button class="btn-shop" id="btnHubOpenShop" onclick="SkinSystem.openShopModal()" title="스킨 상점 열기">
+        🛍️ 스킨 상점
+      </button>
       <!-- Auth -->
       <div id="hubGuestSection">
         <button class="btn btn-secondary" id="hubBtnAuth">로그인 / 회원가입</button>
@@ -40,6 +44,11 @@
   <section class="hub-hero">
     <h2 class="hub-hero-title">AI와 함께하는<br><span class="gold">전통 보드게임</span></h2>
     <p class="hub-hero-sub">4가지 게임 · 4단계 난이도 · 코인 & 스킨 시스템</p>
+    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+      <button class="btn-shop" onclick="SkinSystem.openShopModal()" style="font-size: 15px; padding: 11px 24px; cursor: pointer;">
+        🛍️ 스킨 상점 바로가기
+      </button>
+    </div>
   </section>
 
   <!-- Game Cards Grid -->
@@ -113,7 +122,7 @@
     <!-- Coin Info -->
     <div class="hub-info-bar">
       <div class="hub-info-item">🪙 <strong>코인 보상</strong> - 난이도가 높을수록 더 많은 코인 획득!</div>
-      <div class="hub-info-item">🛍️ <strong>스킨 상점</strong> - 코인으로 바둑판·돌 스킨 구매</div>
+      <div class="hub-info-item" style="cursor: pointer; color: #fbbf24;" onclick="SkinSystem.openShopModal()">🛍️ <strong>스킨 상점</strong> - 코인으로 바둑판·돌 스킨 구매 (상점 열기 ↗)</div>
       <div class="hub-info-item">🏆 <strong>전적 관리</strong> - 게임별 승/패 기록 자동 저장</div>
     </div>
   </main>
@@ -160,7 +169,9 @@
     </div>
   </div>
 
+  <script src="js/audio.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/skin-system.js"></script>
   <script>
     // Auth integration
     async function init() {
